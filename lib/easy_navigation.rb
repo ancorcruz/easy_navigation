@@ -170,3 +170,5 @@ module EasyNavigation
   Builder = Configuration.new
   
 end# EasyNavigation
+
+ActionView::Base.send :include, EasyNavigation::Helper
