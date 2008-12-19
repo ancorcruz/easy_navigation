@@ -29,16 +29,8 @@ this:
         tab.menu :index, :url => { :controller => "dashboard", :action => "index" } do |menu|
           menu.connect :except => "new" # if :controller not specified it asumes is the same from tab
         end
-      end
-      navigation.tab :post, :url => { :controller => "posts", :action => "index" } do |tab|
-        tab.menu :index, :url => { :controller => "posts", :action => "index" } do |menu|
-          menu.connect :except => "new"
-        end
-        tab.menu :new, :url => { :controller => "posts", :action => "new" } do |menu|
+        tab.menu :new, :url => { :controller => "dashboard", :action => "index" } do |menu|
           menu.connect :only => "new"
-        end
-        tab.menu :rss, :url => { :controller => "post_rss", :action => "atom" } do |menu|
-          menu.connect :only => "show"
         end
       end
     end
@@ -46,14 +38,14 @@ this:
 
 For internationalization, edit your "en-US.easy_navigation.yml" file lique this:
 
-en-US:
-  easy_navigation:
-    default:
-      home: 
-        title: "Home"
-        menus:
-          index: "Dashboard"
-          new: "New Page"
+  en-US:
+    easy_navigation:
+      default:
+        home: 
+          title: "Home"
+          menus:
+            index: "Dashboard"
+            new: "New Page"
         
 
 As an example, to render you newly created menu called :default in your 
