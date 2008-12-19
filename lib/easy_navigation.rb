@@ -90,17 +90,16 @@ module EasyNavigation
       
       class Navigation
       
-        attr_accessor :tabs, :name, :options, :prefix
+        attr_accessor :tabs, :name, :options
       
         def initialize(name, options = {})
           self.tabs = []
           self.name = name
           self.options = options
-          self.prefix = options[:prefix]
         end
       
         def tab(name, options = {}, &block)
-          tab = Tab.new(name, options.merge!(:prefix => [self.prefix, self.name]))
+          tab = Tab.new(name, options.merge!(:prefix => [self.options[:prefix], self.name]))
           yield tab
           self.tabs << tab.build
         end
@@ -112,47 +111,43 @@ module EasyNavigation
         
         class Tab
         
-          attr_accessor :menus, :name, :url, :options, :prefix
+          attr_accessor :menus, :name, :options
           
           def initialize(name, options = {})
             self.menus = []
             self.name = name
-            self.url = options[:url]
             self.options = options
-            self.prefix = options[:prefix]
           end
           
           def menu(name, options = {}, &block)
-            menu = Menu.new(name, options.merge!(:prefix => [self.prefix, self.name, "menus"]))
+            menu = Menu.new(name, options.merge!(:prefix => [self.options[:prefix], self.name, "menus"]))
             yield menu
             self.menus << menu.build
           end
           
           def build
-            { :name => [self.prefix, self.name].join("_").to_sym, 
-              :text => [self.prefix, self.name, "title"].join("."), 
-              :url => self.url, 
+            { :name => [self.options[:prefix], self.name].join("_").to_sym, 
+              :text => [self.options[:prefix], self.name, "title"].join("."), 
+              :url => self.options[:url],
               :options => self.options, 
               :menus => self.menus }
           end
           
           class Menu
             
-            attr_accessor :name, :url, :options, :active_urls, :prefix
+            attr_accessor :name, :options, :active_urls
             
             def initialize(name, params = {})
               self.active_urls = []
               self.name = name
-              self.url = params[:url]
               self.options = params
-              self.prefix = params[:prefix]
             end
             
             def build
-              self.prefix << self.name
-              { :name => self.prefix.join("_").to_sym, 
-                :text => self.prefix.join("."), 
-                :url => self.url, 
+              self.options[:prefix] << self.name
+              { :name => self.options[:prefix].join("_").to_sym, 
+                :text => self.options[:prefix].join("."), 
+                :url => self.options[:url], 
                 :on => self.active_urls }
             end
             
@@ -169,6 +164,6 @@ module EasyNavigation
   
   Builder = Configuration.new
   
-end# EasyNavigation
+end # EasyNavigation
 
 ActionView::Base.send :include, EasyNavigation::Helper
