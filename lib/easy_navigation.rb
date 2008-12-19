@@ -79,7 +79,7 @@ module EasyNavigation
       end
         
       def navigation(name, options = {}, &block)
-        navigation = Navigation.new(name, options.merge!(:prefix => "navigation"))
+        navigation = Navigation.new(name, options.merge!(:prefix => "easy_navigation"))
         yield navigation
         self.navigations << navigation.build
       end
@@ -100,7 +100,7 @@ module EasyNavigation
         end
       
         def tab(name, options = {}, &block)
-          tab = Tab.new(name, options.merge!(:prefix => [self.prefix, self.name]))
+          tab = Tab.new(name, options.merge!(:prefix => [self.prefix, self.name, "tabs"]))
           yield tab
           self.tabs << tab.build
         end
@@ -123,7 +123,7 @@ module EasyNavigation
           end
           
           def menu(name, options = {}, &block)
-            menu = Menu.new(name, options.merge!(:prefix => [self.prefix, self.name]))
+            menu = Menu.new(name, options.merge!(:prefix => [self.prefix, self.name, "menus"]))
             yield menu
             self.menus << menu.build
           end

@@ -48,14 +48,16 @@ For internationalization, edit your en.yml file lique this (NOT TESTED JET):
 
   easy_navigation:
     default:
-      home:
-        index: "Home"
+      tabs:
+        home: "Home"
+        menus:
+          index: "Index"
         
 
 As an example, to render you newly created menu called :default in your 
 layout/application.erb :
 
-  <% render_navigation :default %>
+  <%= render_navigation :default %>
 
 Pretty easy, right?
 

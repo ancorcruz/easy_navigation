@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{easy_navigation}
-  s.version = "0.1.1"
+  s.version = "0.1.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ivan Torres"]
-  s.date = %q{2008-12-18}
+  s.date = %q{2008-12-19}
   s.description = %q{Easy navigation for ruby on rails 2.2 (i18n)}
   s.email = %q{mexpolk@gmail.com}
   s.extra_rdoc_files = ["README.rdoc", "lib/easy_navigation.rb"]
