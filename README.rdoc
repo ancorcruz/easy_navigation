@@ -24,12 +24,30 @@ Once installed simply create config/initializers/easy_navigation.rb file like
 this:
 
   EasyNavigation::Builder.config do |map|
-    map.navigation :default, :separator => true do |navigation|
-      navigation.tab :home, :url => { :controller => "dashboard", :action => "index" } do |tab|
-        tab.menu :index, :url => { :controller => "dashboard", :action => "index" } do |menu|
-          menu.connect :except => "new" # if :controller not specified it asumes is the same from tab
+    map.navigation :default do |navigation|
+      navigation.tab :home, :url => { :controller => "/dashboard", :action => "index"} do |tab|
+        tab.menu :index, :url => { :controller => "/dashboard", :action => "index" } do |menu|
+          menu.connect :controller => "dashboard"
         end
-        tab.menu :new, :url => { :controller => "dashboard", :action => "index" } do |menu|
+      end
+      navigation.tab :contacts, :url => { :controller => "/contacts", :action => "index" } do |tab|
+        tab.menu :index, :url => { :controller => "/contacts", :action => "index" } do |menu|
+          menu.connect :controller => "/contacts"
+          menu.connect :controller => "/contacts/people", :except => "new"
+          menu.connect :controller => "/contacts/companies", :except => "new"
+        end
+        tab.menu :new_person, :url => { :controller => "/contacts/people", :action => "new" } do |menu|
+          menu.connect :only => "new"
+        end
+        tab.menu :new_company, :url => { :controller => "/contacts/companies", :action => "new" } do |menu|
+          menu.connect :only => "new"
+        end
+      end
+      navigation.tab :admin, :url => { :controller => "/admin/users", :action => "index" } do |tab|
+        tab.menu :index, :url => { :controller => "/admin/users", :action => "index" } do |menu|
+          menu.connect :except => "new"
+        end
+        tab.menu :new, :url => { :controller => "/admin/users", :action => "new" } do |menu|
           menu.connect :only => "new"
         end
       end
@@ -39,19 +57,59 @@ this:
 For internationalization, edit your "en-US.easy_navigation.yml" file lique this:
 
   en-US:
-    easy_navigation:
-      default:
-        home: 
-          title: "Home"
-          menus:
-            index: "Dashboard"
-            new: "New Page"
+    navigation:
+      default:                  # The name of your navigation menu
+        home:                   # The name of your tab
+          title: "Home"         # The title of your tab
+          menus:                
+            index: "Dashboard"  # The title for index action menu
+            new: "New Page"     # The title for new action menu
         
 
 As an example, to render you newly created menu called :default in your 
 "layout/application.erb":
 
-  <%= render_navigation :default %>
+  <%= easy_navigation :default, options = {} %>
+
+===Helper Options
+
+  :navigation_class => Sets the class name for navigation menus (default: navigation).
+  :tab_class        => Sets the class name for tabs (default: tab).
+  :menu_class       => Sets the class name for menus (default: menu).
+  :separator_class  => Sets the class name for separators (default: sparator).
+  :separator        => Place a separator after each menu (default: false)
+
+===Render Customization
+
+Sometimes you need the way that the navigation menu gets renderer, simply override
+the following methods and you're done:
+
+====Navigation Menus
+
+  def render_navigation(id, tabs_html, class_name)
+    content_tag("ul", tabs_html, :id => id, :class => class_name)
+  end
+
+====Tabs
+    
+  def render_tab(id, text, url, menus_html, class_name)
+    content_tag("li",
+      "#{link_to(t(text), url)} #{content_tag("ul", menus_html)}",
+      :id => id, :class => class_name)
+  end
+  
+====Menus
+
+  def render_menu(id, text, url, class_name)
+    content_tag("li", link_to(t(text), url), :id => id, :class => class_name)
+  end
+  
+====Separators
+
+  def render_separator(class_name)
+    content_tag("li", "|", :class => class_name)
+  end
+
 
 Pretty easy... right?
 
