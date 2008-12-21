@@ -90,8 +90,8 @@ As an example, to render you newly created menu called :default in your
 
 ===Render Customization
 
-Sometimes you need the way that the navigation menu gets renderer, simply override
-the following methods and you're done:
+You may wan't to change the way that the navigation menu gets rendered, if so
+simply override the following methods (from EasyNavigation::Helper):
 
 ====Navigation Menus
 
