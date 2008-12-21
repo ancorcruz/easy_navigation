@@ -17,6 +17,15 @@ Add the following line to your /config/environment.rb file:
 And from the command line run:
 
   rake gems:install
+  
+===Install as a Plugin
+
+If your rather prefer to install it as a plugin, from your application 
+directory simply run:
+
+  script/plugin install git://github.com/innetra/easy_navigation.git
+
+And you're done!
 
 == Usage
 
@@ -54,7 +63,7 @@ this:
     end
   end
 
-For internationalization, edit your "en-US.easy_navigation.yml" file lique this:
+For internationalization, edit your "en-US.easy_navigation.yml" file like this:
 
   en-US:
     navigation:
