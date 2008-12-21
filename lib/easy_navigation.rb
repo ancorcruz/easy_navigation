@@ -2,44 +2,65 @@ module EasyNavigation
 
   module Helper
   
-    def render_navigation(name)
-    
-      html = ""
-      class_name = ""
+    def easy_navigation(name, options = {})
+
+      navigation_class_name = (options[:navigation_class] || "navigation").to_s
+      tab_class_name = (options[:tab_class] || "tab").to_s
+      menu_class_name = (options[:menu_class] || "menu").to_s
+      separator_class_name = (options[:separator_class] || "separator").to_s
+      separator = options[:separator] || false
+
+      tabs_html = ""
       
       EasyNavigation::Builder.navigation[name][:tabs].each do |tab|
         menus_html = ""
         current_tab = false
         tab[:menus].each do |menu|
-          class_name = "menu"
-          if current_menu?(menu)
-            class_name << " current"
+          if current = current_menu?(menu)
             current_tab = true
-          end 
-          menus_html << content_tag("li", link_to(t(menu[:text]), menu[:url]), 
-            :class => class_name, :id => menu[:name])
-         if EasyNavigation::Builder.navigation[name][:options][:separator]
-           menus_html << content_tag("li", "|", :class => "separator") 
-         end
+          end
+          menus_html << self.render_menu(menu[:name], menu[:text], 
+            menu[:url].merge!(:skip_relative_url_root => true), 
+            ("#{menu_class_name} current" if current) || menu_class_name)
+          if separator
+           menus_html << self.render_separator(separator_class_name)
+          end
         end
-        class_name = "tab"
-        class_name << " current" if current_tab
-        html << content_tag("li",
-          "#{link_to(t(tab[:text]), tab[:url])} #{content_tag("ul", menus_html)}", 
-          :class => class_name, :id => tab[:name])
+        tabs_html << self.render_tab(tab[:name], 
+          tab[:text], 
+          tab[:url].merge!(:skip_relative_url_root => true), 
+          menus_html, ("#{tab_class_name} current" if current_tab) || tab_class_name)
       end
-      content_tag("ul", html, :id => "navigation")
+      self.render_navigation("navigation_" << name.to_s, tabs_html, navigation_class_name)
     end
     
-    private
-
+    protected
+    
+    def render_separator(class_name)
+      content_tag("li", "|", :class => class_name)
+    end
+    
+    def render_menu(id, text, url, class_name)
+      content_tag("li", link_to(t(text), url), :id => id, :class => class_name)
+    end
+    
+    def render_tab(id, text, url, menus_html, class_name)
+      content_tag("li",
+        "#{link_to(t(text), url)} #{content_tag("ul", menus_html)}",
+        :id => id, :class => class_name)
+    end
+    
+    def render_navigation(id, tabs_html, class_name)
+      content_tag("ul", tabs_html, :id => id, :class => class_name)
+    end
+    
     def current_menu?(menu)
-      current = controller.controller_name == menu[:url][:controller] && 
+      current = controller.params[:controller] == menu[:url][:controller].gsub(/^\//, "") && 
         (controller.action_name == menu[:url][:action] || menu[:url][:action] == nil)
       if menu.has_key?:on 
          (menu[:on].is_a?(Array) ? menu[:on] : [menu[:on]]).each do |controllers|
           (controllers.is_a?(Array) ? controllers : [controllers]).each do |c|
-             current |= controller.controller_name == c[:controller]
+             current |= controller.params[:controller] == c[:controller].gsub(/^\//, "")
             if c.has_key?:only
               current &= (c[:only].is_a?(Array) ? c[:only] : [c[:only]]).include?controller.action_name
             end
@@ -79,7 +100,7 @@ module EasyNavigation
       end
         
       def navigation(name, options = {}, &block)
-        navigation = Navigation.new(name, options.merge!(:prefix => "easy_navigation"))
+        navigation = Navigation.new(name, options.merge!(:prefix => "navigation"))
         yield navigation
         self.navigations << navigation.build
       end
