@@ -45,13 +45,12 @@ module EasyNavigation
     # This code could be better but works!
     def current_tab?(tab)
       if tab[:tabs].empty?
-        if tab[:url][:action]
+        if tab[:url] && tab[:url][:action]
           return (controller.params[:controller] == tab[:url][:controller] &&
                      controller.params[:action] == tab[:url][:action]) ||
                      (tab[:clones].include? controller.params[:controller])
         else
-          return (controller.params[:controller] == tab[:url][:controller] &&
-                     controller.params[:action] == 'index') || 
+          return controller.params[:controller] == tab[:url][:controller] ||
                      (tab[:clones].include? controller.params[:controller])
         end
       else
